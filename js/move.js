@@ -131,7 +131,6 @@ class Move {
             this.moveDiagram(this.subgraph, dx, dy);
             this.editor.graph.moveSubgraph(this.subgraph, dx, dy);
         } else {
-            console.log('this.editor.diagramStartCoords', this.editor.diagramStartCoords);
             for (const diagramStartCoord of this.editor.diagramStartCoords) {
                 const elementType = diagramStartCoord.type.toLowerCase() === "bond" ? "edge" : "node";
                 const element = this.editor.canvas.querySelector(`[id="${elementType}-${diagramStartCoord.id}"]`);
@@ -144,16 +143,11 @@ class Move {
                     }
                 }
                 if (element && diagramStartCoord.type === Types.BOND) {
-                    console.log('aaaelement', element);
                     const x1 = element.x1.baseVal.value;
                     const y1 = element.y1.baseVal.value;
                     const x2 = element.x2.baseVal.value;
                     const y2 = element.y2.baseVal.value;
                     if (diagramStartCoord.nodes[0] === node.id) {
-                        // const x2 = element.x2.baseVal.value;
-                        // const y2 = element.y2.baseVal.value;
-                        // // element.setAttribute("x1", finalPoint.x);
-                        // // element.setAttribute("y1", finalPoint.y);
                         const adjustedCoordinates = this.editor.shrinkLine(finalPoint.x, finalPoint.y, x2, y2, 20);
                         if (node.isVisible && adjustedCoordinates) {
                             element.setAttribute("x1", adjustedCoordinates.x1);
@@ -162,9 +156,7 @@ class Move {
                             element.setAttribute("x1", finalPoint.x);
                             element.setAttribute("y1", finalPoint.y);
                         }
-                    } else if (diagramStartCoord.nodes[1] === node.id) {
-                        // const x1 = element.x1.baseVal.value;
-                        // const y1 = element.y1.baseVal.value;
+                    } else {
                         const adjustedCoordinates = this.editor.shrinkLine(x1, y1, finalPoint.x, finalPoint.y, 20);
                         if (node.isVisible && adjustedCoordinates) {
                             element.setAttribute("x2", adjustedCoordinates.x2);
