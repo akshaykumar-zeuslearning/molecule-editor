@@ -28,16 +28,13 @@ class Eraser {
             this.editor.undoRedoManager.saveState();
         } else if (target && target.tagName === "line") {
             target.classList.remove("highlight");
-            const x1 = parseFloat(target.getAttribute("x1"));
-            const y1 = parseFloat(target.getAttribute("y1"));
-            const x2 = parseFloat(target.getAttribute("x2"));
-            const y2 = parseFloat(target.getAttribute("y2"));
-
-            const node1 = this.editor.graph.findNearestAtom({ x: x1, y: y1 });
-            const node2 = this.editor.graph.findNearestAtom({ x: x2, y: y2 });
-            if (node1 && node2) {
+            const edgeId = target.id.replace("edge-", "");
+            const edge = this.editor.graph.findEdgeById(parseInt(edgeId));
+            const findNode1 = this.editor.graph.findNodeById(edge.nodes[0]);
+            const findNode2 = this.editor.graph.findNodeById(edge.nodes[1]);
+            if (findNode1 && findNode2) {
                 this.editor.canvas.removeChild(target);
-                this.editor.graph.removeEdge(node1.id, node2.id);
+                this.editor.graph.removeEdge(findNode1.id, findNode2.id);
             }
             this.editor.undoRedoManager.saveState();
         }
