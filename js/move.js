@@ -143,18 +143,29 @@ class Move {
                     }
                 }
                 if (element && diagramStartCoord.type === Types.BOND) {
-                    if (diagramStartCoord.nodes[0] === node.id) {
-                        element.setAttribute("x1", finalPoint.x);
-                        element.setAttribute("y1", finalPoint.y);
-                    } else {
-                        element.setAttribute("x2", finalPoint.x);
-                        element.setAttribute("y2", finalPoint.y);
-                    }
-
                     const x1 = element.x1.baseVal.value;
                     const y1 = element.y1.baseVal.value;
                     const x2 = element.x2.baseVal.value;
                     const y2 = element.y2.baseVal.value;
+                    if (diagramStartCoord.nodes[0] === node.id) {
+                        const adjustedCoordinates = this.editor.shrinkLine(finalPoint.x, finalPoint.y, x2, y2, 20);
+                        if (node.isVisible && adjustedCoordinates) {
+                            element.setAttribute("x1", adjustedCoordinates.x1);
+                            element.setAttribute("y1", adjustedCoordinates.y1);
+                        } else {
+                            element.setAttribute("x1", finalPoint.x);
+                            element.setAttribute("y1", finalPoint.y);
+                        }
+                    } else {
+                        const adjustedCoordinates = this.editor.shrinkLine(x1, y1, finalPoint.x, finalPoint.y, 20);
+                        if (node.isVisible && adjustedCoordinates) {
+                            element.setAttribute("x2", adjustedCoordinates.x2);
+                            element.setAttribute("y2", adjustedCoordinates.y2);
+                        } else {
+                            element.setAttribute("x2", finalPoint.x);
+                            element.setAttribute("y2", finalPoint.y);
+                        }
+                    }
 
                     const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
                     diagramStartCoord.setLength(length);
@@ -168,13 +179,19 @@ class Move {
         const point = this.editor.drawLineTool.getMousePosition(e);
         const { nodes: selectedNodes } = this.editor.graph.getConnectedNodeAndEdges(point);
         this.editor.diagramStartCoords = [];
+        
         if (selectedNodes.size !== 2) return;
+
         const [node1, node2] = Array.from(selectedNodes);
-        this.editor.graph.mergeNodes(node1.id, node2.id);
-        const node = this.editor.canvas.querySelector(`[id="node-${node1.id}"]`);
-        if (node && node1.isVisible) {
-            this.editor.canvas.removeChild(node);
+
+        const { nodeToKeep, nodeToRemove } = this.editor.graph.getNodeToKeepAndNodeToRemove(node2, node1);
+        this.editor.graph.mergeNodes(nodeToRemove, nodeToKeep);
+
+        const nodeElement = this.editor.canvas.querySelector(`[id="node-${nodeToRemove.id}"]`);
+        if (nodeElement && nodeToRemove.isVisible) {
+            this.editor.canvas.removeChild(nodeElement);
         }
+
         this.subgraph = null;
         this.editor.setGraph(JSON.stringify(this.editor.graph.getGraph()));
     }

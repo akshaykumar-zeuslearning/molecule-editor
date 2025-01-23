@@ -69,36 +69,48 @@ class Graph {
     }
 
     mergeNodes(nodeId1, nodeId2) {
-        const subgraph1 = this.findSubgraphByNode(nodeId1);
+        const subgraph1 = this.findSubgraphByNode(nodeId1.id);
         if (!subgraph1) return;
 
-        const subgraph2 = this.findSubgraphByNode(nodeId2);
+        const subgraph2 = this.findSubgraphByNode(nodeId2.id);
         if (!subgraph2) return;
 
         if (subgraph1 !== subgraph2) {
             subgraph1.nodes.push(...subgraph2.nodes);
-
             subgraph1.edges.push(...subgraph2.edges);
-
             this.subgraphs = this.subgraphs.filter(
                 (subgraph) => subgraph !== subgraph2
             );
         }
 
-        const node1 = subgraph1.nodes.find((node) => node.id === nodeId1);
-        const node2 = subgraph1.nodes.find((node) => node.id === nodeId2);
-        if (!node1 || !node2) return;
+        if (!nodeId1 || !nodeId2) return;
 
         for (const edge of subgraph1.edges) {
-            if (edge.nodes.includes(nodeId1) && !node1.isVisible) {
-                const findIndex = edge.nodes.indexOf(nodeId1);
-                if (findIndex !== -1) {
-                    edge.nodes[findIndex] = nodeId2;
-                }
+            const nodeIndex = edge.nodes.indexOf(nodeId1.id);
+            if (nodeIndex !== -1) {
+                edge.nodes[nodeIndex] = nodeId2.id;
             }
         }
 
-        subgraph1.nodes = subgraph1.nodes.filter((node) => node.id !== nodeId1);
+        subgraph1.nodes = subgraph1.nodes.filter(
+            (node) => node.id !== nodeId1.id
+        );
+    }    
+
+    getNodeToKeepAndNodeToRemove(node2, node1) {
+        let nodeToKeep = node2;
+        if (node1.isVisible && node2.isVisible) {
+            nodeToKeep = node2;
+        } else if (!node1.isVisible && node2.isVisible) {
+            nodeToKeep = node2;
+        } else if (node1.isVisible && !node2.isVisible) {
+            nodeToKeep = node1;
+        } else if (!node1.isVisible && !node2.isVisible) {
+            nodeToKeep = node2;
+        }
+
+        const nodeToRemove = nodeToKeep === node1 ? node2 : node1;
+        return { nodeToRemove, nodeToKeep };
     }
 
     removeEdge(nodeId1, nodeId2) {
