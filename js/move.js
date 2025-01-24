@@ -122,7 +122,7 @@ class Move {
         }
         if (!this.editor.isDragging) return;
         let finalPoint = nearestEndpoint || currentPoint;
-        finalPoint = this.editor.drawLineTool.getSnappedPoint(this.startPoint, finalPoint);
+        finalPoint = this.editor.molecedGraph.getSnappedPoint(this.startPoint, finalPoint);
 
         const node = this.editor.diagramStartCoords.find((coord) => coord.type === Types.ATOM);
         if (!node && this.subgraph) {
