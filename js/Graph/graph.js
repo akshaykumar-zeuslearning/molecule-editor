@@ -11,7 +11,6 @@ class Graph {
         this.subgraphId = 1;
     }
 
-
     createSubgraph() {
         const subgraph = new SubGraph(this.subgraphId++);
         this.subgraphs.push(subgraph);
@@ -257,50 +256,30 @@ class Graph {
         return { nodes, edges };
     }
 
-    findNearestAtom(point) {
-        const { x, y } = point;
-        let nearestNode = null;
-        let minDistance = defaultConstant.SNAP_THRESHOLD;
+    // findNearestEndpoint(point) {
+    //     const { x, y } = point;
+    //     let nearestEndpoint = null;
+    //     let minDistance = defaultConstant.SNAP_THRESHOLD;
 
-        for (const subgraph of this.subgraphs) {
-            for (const node of subgraph.nodes) {
-                const distance = Math.sqrt(
-                    (node.x - x) ** 2 + (node.y - y) ** 2
-                );
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearestNode = node;
-                }
-            }
-        }
+    //     for (const subgraph of this.subgraphs) {
+    //         for (const edge of subgraph.edges) {
+    //             for (const nodeId of edge.nodes) {
+    //                 const node = this.findNodeById(nodeId);
+    //                 if (node) {
+    //                     const distance = Math.sqrt(
+    //                         (node.x - x) ** 2 + (node.y - y) ** 2
+    //                     );
+    //                     if (distance < minDistance) {
+    //                         minDistance = distance;
+    //                         nearestEndpoint = node;
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
 
-        return nearestNode;
-    }
-
-    findNearestEndpoint(point) {
-        const { x, y } = point;
-        let nearestEndpoint = null;
-        let minDistance = defaultConstant.SNAP_THRESHOLD;
-
-        for (const subgraph of this.subgraphs) {
-            for (const edge of subgraph.edges) {
-                for (const nodeId of edge.nodes) {
-                    const node = this.findNodeById(nodeId);
-                    if (node) {
-                        const distance = Math.sqrt(
-                            (node.x - x) ** 2 + (node.y - y) ** 2
-                        );
-                        if (distance < minDistance) {
-                            minDistance = distance;
-                            nearestEndpoint = node;
-                        }
-                    }
-                }
-            }
-        }
-
-        return nearestEndpoint;
-    }
+    //     return nearestEndpoint;
+    // }
 
     findNodeById(nodeId) {
         for (const subgraph of this.subgraphs) {

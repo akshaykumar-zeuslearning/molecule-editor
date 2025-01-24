@@ -1,5 +1,6 @@
 import Node from "./node.js";
 import { generateId } from "../id-generator.js";
+import { defaultConstant } from "../constant.js";
 
 class MolecedGraph {
     constructor(editor) {
@@ -8,7 +9,7 @@ class MolecedGraph {
     }
 
     getSnappedPoint(startPoint, currentPoint) {
-        const atomSnap = this.editor.graph.findNearestAtom(currentPoint);
+        const atomSnap = this.findNearestAtom(currentPoint);
         if (atomSnap) {
             return atomSnap;
         }
@@ -24,13 +25,33 @@ class MolecedGraph {
         return currentPoint;
     }
 
+    findNearestAtom(point) {
+        const { x, y } = point;
+        let nearestNode = null;
+        let minDistance = defaultConstant.SNAP_THRESHOLD;
+
+        for (const subgraph of this.editor.graph.subgraphs) {
+            for (const node of subgraph.nodes) {
+                const distance = Math.sqrt(
+                    (node.x - x) ** 2 + (node.y - y) ** 2
+                );
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    nearestNode = node;
+                }
+            }
+        }
+
+        return nearestNode;
+    }
+
     addEdgefromSVG(params) {
         const { x1, y1, x2, y2, line: currentLine, length } = params;
 
         let node1;
         let node2;
-        const node1Found = this.editor.graph.findNearestAtom({ x: x1, y: y1 });
-        const node2Found = this.editor.graph.findNearestAtom({ x: x2, y: y2 });
+        const node1Found = this.editor.molecedGraph.findNearestAtom({ x: x1, y: y1 });
+        const node2Found = this.editor.molecedGraph.findNearestAtom({ x: x2, y: y2 });
         const shrinkDistance = 20;
         if (node1Found && node2Found) {
             node1 = node1Found;

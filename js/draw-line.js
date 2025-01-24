@@ -20,7 +20,7 @@ class DrawLine {
     drawLine(e) {
         this.instructionText.classList.add("hidden");
         const point = this.getMousePosition(e);
-        const nearestAtom = this.editor.graph.findNearestAtom(point);
+        const nearestAtom = this.editor.molecedGraph.findNearestAtom(point);
         this.startPoint = nearestAtom || point;
         this.showSnapHighlight(this.startPoint);
 
@@ -54,7 +54,7 @@ class DrawLine {
     draw(e) {
         const currentPoint = this.getMousePosition(e);
 
-        const nearestAtom = this.editor.graph.findNearestAtom(currentPoint);
+        const nearestAtom = this.editor.molecedGraph.findNearestAtom(currentPoint);
         this.showSnapHighlight(nearestAtom);
         
         if (!this.isDrawing) return;

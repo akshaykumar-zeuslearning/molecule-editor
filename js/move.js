@@ -98,8 +98,8 @@ class Move {
 
     startMoving(e) {
         const point = this.editor.drawLineTool.getMousePosition(e);
-        const nearestEndpoint = this.editor.graph.findNearestEndpoint(point);
-        this.startPoint = nearestEndpoint || point;
+        const nearestAtom = this.editor.molecedGraph.findNearestAtom(point);
+        this.startPoint = nearestAtom || point;
         this.subgraph = this.editor.graph.findSubgraphByPoint(point);
         const { nodes: selectedNodes, edges: selectedEdges } = this.editor.graph.getConnectedNodeAndEdges(point);
         this.editor.diagramStartCoords.push(...Array.from(selectedNodes), ...Array.from(selectedEdges));
@@ -113,15 +113,14 @@ class Move {
         const boundingBoxes = this.editor.graph.getBoundingBoxes();
         this.drawBoundingBoxes(boundingBoxes);
         const currentPoint = this.editor.drawLineTool.getMousePosition(e);
-        const nearestAtom = this.editor.graph.findNearestAtom(currentPoint);
-        const nearestEndpoint = this.editor.graph.findNearestEndpoint(currentPoint);
+        const nearestAtom = this.editor.molecedGraph.findNearestAtom(currentPoint);
         if (nearestAtom) {
             this.editor.drawLineTool.showSnapHighlight(nearestAtom);
         } else {
-            this.editor.drawLineTool.showSnapHighlight(nearestAtom || nearestEndpoint);
+            this.editor.drawLineTool.showSnapHighlight(nearestAtom);
         }
         if (!this.editor.isDragging) return;
-        let finalPoint = nearestEndpoint || currentPoint;
+        let finalPoint = nearestAtom || currentPoint;
         finalPoint = this.editor.molecedGraph.getSnappedPoint(this.startPoint, finalPoint);
 
         const node = this.editor.diagramStartCoords.find((coord) => coord.type === Types.ATOM);
