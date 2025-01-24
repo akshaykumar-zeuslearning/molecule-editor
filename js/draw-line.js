@@ -57,11 +57,8 @@ class DrawLine {
         const currentPoint = this.getMousePosition(e);
 
         const nearestAtom = this.editor.graph.findNearestAtom(currentPoint);
-        if (nearestAtom) {
-            this.showSnapHighlight(nearestAtom);
-        } else {
-            this.showSnapHighlight(nearestAtom);
-        }
+        this.showSnapHighlight(nearestAtom);
+        
         if (!this.isDrawing) return;
 
         let endPoint = nearestAtom || currentPoint;
