@@ -18,19 +18,50 @@ class DrawLine {
         this.previousMousePosition = null;
     }
 
+    //function on MouseDown in Draw Mode
+    drawLine(e) {
+        this.instructionText.classList.add("hidden");
+        const point = this.getMousePosition(e);
+        const nearestAtom = this.editor.graph.findNearestAtom(point);
+        this.startPoint = nearestAtom || point;
+        this.showSnapHighlight(this.startPoint);
+
+        if (nearestAtom) {
+            this.startPoint = nearestAtom;
+        }
+
+        const snapPoint = this.getSnappedPoint(
+            this.startPoint,
+            this.startPoint
+        );
+        const endX = snapPoint ? snapPoint.x : this.startPoint.x;
+        const endY = snapPoint ? snapPoint.y : this.startPoint.y;
+        
+        this.isDrawing = true;
+        this.currentLine = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+        this.currentLine.setAttribute("x1", this.startPoint.x);
+        this.currentLine.setAttribute("y1", this.startPoint.y);
+        this.currentLine.setAttribute("x2", endX);
+        this.currentLine.setAttribute("y2", endY);
+        this.currentLine.setAttribute("stroke", "black");
+        this.currentLine.setAttribute("stroke-width", "2");
+
+        this.canvas.appendChild(this.currentLine);
+    }
+
+    //function on MouseMove in Draw Mode
     draw(e) {
         const currentPoint = this.getMousePosition(e);
 
-        const nearestEndpoint = this.editor.graph.findNearestEndpoint(currentPoint);
         const nearestAtom = this.editor.graph.findNearestAtom(currentPoint);
-        if (nearestAtom) {
-            this.showSnapHighlight(nearestAtom);
-        } else {
-            this.showSnapHighlight(nearestAtom || nearestEndpoint);
-        }
+        this.showSnapHighlight(nearestAtom);
+        
         if (!this.isDrawing) return;
 
-        let endPoint = nearestEndpoint || currentPoint;
+        let endPoint = nearestAtom || currentPoint;
         endPoint = this.getSnappedPoint(this.startPoint, endPoint);
         // TODO: need to fix shrink line when dragging
         // if (!nearestAtom && this.startPoint.x !== endPoint.x || this.startPoint.y !== endPoint.y) {
@@ -43,8 +74,10 @@ class DrawLine {
 
         this.currentLine.setAttribute("x2", endPoint.x);
         this.currentLine.setAttribute("y2", endPoint.y);
+        
     }
 
+    //function on MouseUp in Draw Mode
     stopDrawing() {
         if (!this.isDrawing) return;
         const x1 = this.currentLine.x1.baseVal.value;
@@ -133,79 +166,21 @@ class DrawLine {
         this.startPoint = null;
     }
 
-    drawLine(e) {
-        this.instructionText.classList.add("hidden");
-        const point = this.getMousePosition(e);
-        const nearestAtom = this.editor.graph.findNearestAtom(point);
-        const nearestEndpoint = this.editor.graph.findNearestEndpoint(point);
-        this.startPoint = nearestEndpoint || point;
-        this.showSnapHighlight(this.startPoint);
-
-        if (nearestAtom) {
-            this.startPoint = nearestAtom;
-        }
-
-        const snapPoint = this.getSnapPoint(
-            this.startPoint.x,
-            this.startPoint.y
-        );
-        const endX = snapPoint ? snapPoint.x : this.startPoint.x;
-        const endY = snapPoint ? snapPoint.y : this.startPoint.y;
-
-        this.isDrawing = true;
-        this.currentLine = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "line"
-        );
-        this.currentLine.setAttribute("x1", this.startPoint.x);
-        this.currentLine.setAttribute("y1", this.startPoint.y);
-        this.currentLine.setAttribute("x2", endX);
-        this.currentLine.setAttribute("y2", endY);
-        this.currentLine.setAttribute("stroke", "black");
-        this.currentLine.setAttribute("stroke-width", "2");
-
-        this.canvas.appendChild(this.currentLine);
-    }
-
     getSnappedPoint(startPoint, currentPoint) {
-        const dx = currentPoint.x - startPoint.x;
-        const dy = currentPoint.y - startPoint.y;
-
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < 10) {
-            return currentPoint;
-        }
-
         const atomSnap = this.editor.graph.findNearestAtom(currentPoint);
         if (atomSnap) {
             return atomSnap;
         }
 
-        const endpointSnap = this.editor.graph.findNearestEndpoint(currentPoint);
-        if (endpointSnap) {
-            return endpointSnap;
-        }
+        const dx = currentPoint.x - startPoint.x;
+        const dy = currentPoint.y - startPoint.y;
 
         if (Math.abs(dy) <= this.snapThreshold) {
             currentPoint.y = startPoint.y;
         } else if (Math.abs(dx) <= this.snapThreshold) {
             currentPoint.x = startPoint.x;
         }
-
         return currentPoint;
-    }
-
-    getSnapPoint(x, y) {
-        for (const coord of this.editor.graph.getAllNodes()) {
-            if (isWithinRadius(x, y, coord.x, coord.y, 10)) {
-                return {
-                    id: coord.id,
-                    x,
-                    y,
-                };
-            }
-        }
-        return null;
     }
 
     showSnapHighlight(snapPoint) {
