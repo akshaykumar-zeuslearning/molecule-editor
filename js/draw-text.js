@@ -72,7 +72,7 @@ class DrawTextAtom {
             if (sub) textElement.appendChild(subTspan);
         });
 
-        const existingNode = this.editor.graph.findNearestAtom({ x, y: y + 5 });
+        const existingNode = this.editor.molecedGraph.findNearestAtom({ x, y: y + 5 });
         if (!existingNode) {
             const textId = generateId();
             textElement.id = `node-${textId}`;
@@ -133,7 +133,7 @@ class DrawTextAtom {
     handleLetterClick(event) {
         const atom = event.symbol;
 
-        const nearestAtom = this.editor.graph.findNearestAtom(this.popupCoords);
+        const nearestAtom = this.editor.molecedGraph.findNearestAtom(this.popupCoords);
         if (nearestAtom) {
             nearestAtom.setValue(atom);
             nearestAtom.setVisible(true);
@@ -165,7 +165,7 @@ class DrawTextAtom {
             });
             this.editor.selectedAtom = null;
         } else {
-            const nearestEndpoint = this.editor.graph.findNearestEndpoint(this.popupCoords);
+            const nearestEndpoint = this.editor.molecedGraph.findNearestAtom(this.popupCoords);
             const point = nearestEndpoint || this.popupCoords;
             this.addAtom(point.x, point.y, atom);
             this.editor.undoRedoManager.saveState();

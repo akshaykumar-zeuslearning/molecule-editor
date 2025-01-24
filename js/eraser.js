@@ -12,7 +12,7 @@ class Eraser {
             const y = parseFloat(target.getAttribute("y"));
 
             this.editor.canvas.removeChild(target);
-            const node = this.editor.graph.findNearestAtom({ x, y: y - 5 });
+            const node = this.editor.molecedGraph.findNearestAtom({ x, y: y - 5 });
             const edges = this.editor.graph.findEdgesByNodeId(node.id);
             for (const edge of edges) {
                 const edgeElement = this.editor.canvas.querySelector(`[id="edge-${edge.id}"]`);
