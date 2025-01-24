@@ -10,13 +10,18 @@ import Toolbar from "./toolbar.js";
 import { tools } from "./tools.js";
 import { formatSubscript } from "./util.js";
 import Eraser from "./eraser.js";
+import Event from "./event.js";
+import ToolManager from "./tool-manager.js";
+import Tool from "./tool.js";
 
 class MoleculeEditor {
     constructor(editorContainer) {
         this.editorContainer = editorContainer;
         this.currentTool = "pencil";
+        this.dragging = false;
         this.eraseRadius = 5;
         this.svg = new Canvas(this);
+        this.tools = tools;
         this.toolbar = new Toolbar(this, { className: "toolbar", tools });
         this.popup = new PopupManager(this, {
             headerText: "Edit Atom",
@@ -53,6 +58,13 @@ class MoleculeEditor {
         this.drawLineTool = new DrawLine(this);
         this.eraser = new Eraser(this);
         this.undoRedoManager = new UndoRedoManager(this);
+        // new Event(this);
+        this.toolManager = new ToolManager(tools.map(tool => new Tool(tool.id, tool.name, tool.class, tool.title, tool.icon, tool.actions, this)));
+        this.toolManager.initializeTools();
+
+        // Set the default tool as active
+        this.setActiveTool(this.tools.find(tool => tool.id === "pencil-tool"));
+
 
         this.bindKeyboardShortcuts();
     }
@@ -64,8 +76,59 @@ class MoleculeEditor {
         this.popup.popup.addEventListener("popup-close", () => {
             this.popup.hidePopup();
         });
+
+        this.editorContainer.addEventListener("toolClick", (event) => {
+            this.toolClick(event);
+        });
     }
 
+    setActiveTool(newTool) {
+        // Deactivate the current active tool if exists
+        if (this.activeTool) {
+            this.activeTool.setActive(false);
+        }
+
+        // Activate the new tool
+        this.activeTool = newTool;
+        this.activeTool.setActive(true);
+    }
+
+    toolClick(e) {
+        console.log(e);
+    }
+
+    drawActionOnMouseDown(e) {
+        console.log('Draw started at', e.clientX, e.clientY);
+        // this.dragging = false;
+        this.drawLineTool.drawLine(e);
+    }
+
+    drawActionOnMouseMove(e) {
+        console.log('Draw in progress at', e.clientX, e.clientY);
+        // this.dragging = true;
+        this.drawLineTool.draw(e);
+    }
+
+    drawActionOnMouseUp() {
+        console.log('Draw ended');
+        this.drawLineTool.stopDrawing();
+        this.undoRedoManager.saveState();
+    }
+
+    // Define other tool actions as needed (erase, move, etc.)
+    eraseActionOnMouseDown(e) {
+        console.log('Erasing started');
+        this.eraser.eraseElement(e);
+    }
+    eraseActionOnMouseMove(e) {
+        console.log('Erasing in progress');
+        this.eraser.createHighlightEraseElement(e);
+    }
+
+    moveActionOnMouseDown(event) {
+        console.log('Move started at', event.clientX, event.clientY);
+        // Implement move logic
+    }
 
     onMouseHover(e) {
         this.moveTool.removeBoundingBoxes();
@@ -95,8 +158,6 @@ class MoleculeEditor {
             this.moveTool.stopMoving(e);
             this.undoRedoManager.saveState();
         } else if (this.currentTool === "pencil") {
-            this.drawLineTool.stopDrawing();
-            this.undoRedoManager.saveState();
         }
     }
     onMouseDown(e) {
@@ -104,9 +165,7 @@ class MoleculeEditor {
             this.isDragging = true;
             this.moveTool.startMoving(e);
         } else if (this.currentTool === "pencil") {
-            this.drawLineTool.drawLine(e);
         } else if (this.currentTool === "eraser") {
-            this.eraser.eraseElement(e);
         }
     }
 
@@ -114,9 +173,7 @@ class MoleculeEditor {
         if (this.currentTool === "move") {
             this.moveTool.move(e);
         } else if (this.currentTool === "pencil") {
-            this.drawLineTool.draw(e);
         } else if (this.currentTool === "eraser") {
-            this.eraser.createHighlightEraseElement(e);
         }
     }
 
