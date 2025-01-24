@@ -5,6 +5,7 @@ import PopupManager from "./popup.js";
 import UndoRedoManager from "./undo-redo-manager.js";
 import Move from './move.js';
 import Graph from "./Graph/graph.js";
+import MolecedGraph from "./Graph/moleced-graph.js";
 import Toolbar from "./toolbar.js";
 import { tools } from "./tools.js";
 import { formatSubscript } from "./util.js";
@@ -46,6 +47,7 @@ class MoleculeEditor {
         this.instructionText = this.editorContainer.querySelector(".instruction-text");
         this.canvas = this.svg.getCanvas();
         this.graph = new Graph("graph");
+        this.molecedGraph = new MolecedGraph(this);
         this.drawTextAtom = new DrawTextAtom(this);
         this.moveTool = new Move(this)
         this.drawLineTool = new DrawLine(this);
