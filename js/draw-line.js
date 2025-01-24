@@ -89,13 +89,13 @@ class DrawLine {
             this.currentLine.remove();
         } else {
             const edgeData = {
-                x1: x1,
-                y1: y1,
-                x2: x2,
-                y2: y2,
+                x1,
+                y1,
+                x2,
+                y2,
                 line: this.currentLine,
-                length: length
-            }
+                length
+            };
             this.editor.molecedGraph.addEdgefromSVG(edgeData);
         }
 

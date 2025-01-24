@@ -25,12 +25,7 @@ class MolecedGraph {
     }
 
     addEdgefromSVG(params) {
-        let x1 = params.x1;
-        let y1 = params.y1;
-        let x2 = params.x2;
-        let y2 = params.y2;
-        let currentLine = params.line;
-        let length = params.length;
+        const { x1, y1, x2, y2, line: currentLine, length } = params;
 
         let node1;
         let node2;
