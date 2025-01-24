@@ -21,16 +21,7 @@ class Toolbar {
             button.disabled = tool.disabled;
 
             button.addEventListener("click", () => {
-                this.container.dispatchEvent(
-                    new CustomEvent("toolbarAction", {
-                        detail: {
-                            toolId: tool.id,
-                            editor: this.editor,
-                        },
-                    })
-                );
-
-                if (tool.onClick) tool.onClick(this.editor, button);
+                this.editor.currentTool = tool.name;
                 this.setActiveTool(button);
             });
 

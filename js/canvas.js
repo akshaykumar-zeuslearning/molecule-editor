@@ -3,9 +3,9 @@ class Canvas {
         this.editor = editor;
         this.container = editor.editorContainer;
         this.canvas = null;
-        this.dragging = false;
         this.createSvgCanvas();
         this.initCanvas();
+        this.dragging = false;
     }
 
     createSvgCanvas() {
@@ -44,14 +44,14 @@ class Canvas {
         });
         this.canvas.addEventListener("mousedown", (e) => {
             this.dragging = false;
-            this.editor.onMouseDown(e);
+        //     this.editor.onMouseDown(e);
         });
         this.canvas.addEventListener("mousemove", (e) => {
             this.dragging = true;
-            this.editor.onMouseMove(e);
+            // this.editor.onMouseMove(e);
         });
         this.canvas.addEventListener("mouseup", (e) => {
-            this.editor.onMouseUp(e);
+            // this.editor.onMouseUp(e);
         });
     }
 
