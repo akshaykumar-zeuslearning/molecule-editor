@@ -74,49 +74,22 @@ class DrawTextAtom {
 
         const existingNode = this.editor.graph.findNearestAtom({ x, y: y + 5 });
         if (!existingNode) {
-            const textId = generateId();
-            textElement.id = `node-${textId}`;
-            const node = new Node(textId, text, true)
-            node.setCoordinates(x, y);
-            this.editor.graph.addNode(node);
+            const textData = {
+                x,
+                y,
+                text
+            }
+            textElement.id = this.editor.molecedGraph.addNodefromSVG(textData);
         } else {
             textElement.id = `node-${existingNode.id}`;
             existingNode.setValue(text);
             existingNode.setVisible(true);
-            const edges = this.editor.graph.findEdgesByNodeId(existingNode.id);
-            for (const edge of edges) {
-                const edgeElement = this.editor.canvas.querySelector(`[id="edge-${edge.id}"]`);
-                let adjustedCoordinates = null;
-                const x1 = edgeElement?.x1.baseVal.value;
-                const y1 = edgeElement?.y1.baseVal.value;
-                const x2 = edgeElement?.x2.baseVal.value;
-                const y2 = edgeElement?.y2.baseVal.value;
-                if (edgeElement) {
-                    adjustedCoordinates = this.editor.shrinkLine(x1, y1, x2, y2, 20);
-                }
-
-                if (adjustedCoordinates && x1 === x && y1 === y) {
-                    edgeElement.setAttribute(
-                        "x1",
-                        adjustedCoordinates.x1,
-                    );
-                    edgeElement.setAttribute(
-                        "y1",
-                        adjustedCoordinates.y1,
-                    );
-                }
-
-                if (x2 === x && y2 === y) {
-                    edgeElement.setAttribute(
-                        "x2",
-                        adjustedCoordinates.x2,
-                    );
-                    edgeElement.setAttribute(
-                        "y2",
-                        adjustedCoordinates.y2,
-                    );
-                }
+            const textData = {
+                x,
+                y,
+                textId : existingNode.id
             }
+            this.editor.molecedGraph.replaceNodefromSVG(textData)
         }
         this.canvas.appendChild(textElement);
 
