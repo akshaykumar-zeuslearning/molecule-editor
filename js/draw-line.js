@@ -12,7 +12,6 @@ class DrawLine {
         this.currentLine = null;
         this.startPoint = null;
         this.isDrawing = false;
-        this.snapThreshold = defaultConstant.SNAP_THRESHOLD;
         this.previousMousePosition = null;
     }
 
