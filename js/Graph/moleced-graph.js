@@ -5,6 +5,7 @@ import { defaultConstant } from "../constant.js";
 class MolecedGraph {
     constructor(editor) {
         this.editor = editor;
+        this.snapThreshold = defaultConstant.SNAP_THRESHOLD;
         // this.container = editor.editorContainer;
     }
 
@@ -15,10 +16,9 @@ class MolecedGraph {
         }
         const dx = currentPoint.x - startPoint.x;
         const dy = currentPoint.y - startPoint.y;
-        const snapThreshold = defaultConstant.SNAP_THRESHOLD;
-        if (Math.abs(dy) <= snapThreshold) {
+        if (Math.abs(dy) <= this.snapThreshold) {
             currentPoint.y = startPoint.y;
-        } else if (Math.abs(dx) <= snapThreshold) {
+        } else if (Math.abs(dx) <= this.snapThreshold) {
             currentPoint.x = startPoint.x;
         }
         return currentPoint;
