@@ -26,7 +26,6 @@ class MolecedGraph {
 
     addEdgefromSVG(params) {
         const { x1, y1, x2, y2, line: currentLine, length } = params;
-    
         let node1;
         let node2;
         const node1Found = this.editor.graph.findNearestAtom({ x: x1, y: y1 });
