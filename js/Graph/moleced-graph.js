@@ -109,7 +109,7 @@ class MolecedGraph {
     }
 
     replaceNodefromSVG(params) {
-        const { x, y, textId:existingNodeId } = params;
+        const { x, y, textId: existingNodeId } = params;
         const edges = this.editor.graph.findEdgesByNodeId(existingNodeId);
         for (const edge of edges) {
             const edgeElement = this.editor.canvas.querySelector(`[id="edge-${edge.id}"]`);
