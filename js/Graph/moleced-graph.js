@@ -13,13 +13,12 @@ class MolecedGraph {
         if (atomSnap) {
             return atomSnap;
         }
-
         const dx = currentPoint.x - startPoint.x;
         const dy = currentPoint.y - startPoint.y;
-
-        if (Math.abs(dy) <= this.snapThreshold) {
+        const snapThreshold = defaultConstant.SNAP_THRESHOLD;
+        if (Math.abs(dy) <= snapThreshold) {
             currentPoint.y = startPoint.y;
-        } else if (Math.abs(dx) <= this.snapThreshold) {
+        } else if (Math.abs(dx) <= snapThreshold) {
             currentPoint.x = startPoint.x;
         }
         return currentPoint;
